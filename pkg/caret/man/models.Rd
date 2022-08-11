@@ -454,6 +454,10 @@ For classification and regression using packages \pkg{xgboost} and \pkg{plyr} wi
 \item Fraction of Trees Dropped (\code{rate_drop}, numeric)
 \item Prob. of Skipping Drop-out (\code{skip_drop}, numeric)
 \item Minimum Sum of Instance Weight (\code{min_child_weight}, numeric)
+\item L2 Regularization (\code{lambda}, numeric)
+\item L1 Regularization (\code{alpha}, numeric)
+\item Maximum Delta Step (\code{max_delta_step}, numeric)
+\item Scale Position Weight (\code{scale_pos_weight}, numeric)
 }
 
 
@@ -479,6 +483,10 @@ For classification and regression using packages \pkg{xgboost} and \pkg{plyr} wi
 \item Subsample Ratio of Columns (\code{colsample_bytree}, numeric)
 \item Minimum Sum of Instance Weight (\code{min_child_weight}, numeric)
 \item Subsample Percentage (\code{subsample}, numeric)
+\item L2 Regularization (\code{lambda}, numeric)
+\item L1 Regularization (\code{alpha}, numeric)
+\item Maximum Delta Step (\code{max_delta_step}, numeric)
+\item Scale Position Weight (\code{scale_pos_weight}, numeric)
 }
 
 
