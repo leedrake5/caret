@@ -18,7 +18,11 @@ modelInfo <- list(label = "eXtreme Gradient Boosting",
                                                         "colsample_bytree",
                                                         "rate_drop",
                                                         "skip_drop",
-                                                        "min_child_weight"),
+                                                        "min_child_weight",
+                                                        "alpha", 
+                                                        "lambda", 
+                                                        "max_delta_step", 
+                                                        "scale_pos_weight"),
                                           class = c(rep("numeric", 9)),
                                           label = c("# Boosting Iterations",
                                                     "Max Tree Depth",
@@ -28,7 +32,11 @@ modelInfo <- list(label = "eXtreme Gradient Boosting",
                                                     "Subsample Ratio of Columns",
                                                     "Fraction of Trees Dropped",
                                                     "Prob. of Skipping Drop-out",
-                                                    "Minimum Sum of Instance Weight")),
+                                                    "Minimum Sum of Instance Weight", 
+                                                    'L1 Regularization', 
+                                                    'L2 Regularization', 
+                                                    'Maximum Delta Step for Leafs', 
+                                                    'Balance of Positive and Negative Weights')),
                   grid = function(x, y, len = NULL, search = "grid") {
                     if(search == "grid") {
                       out <- expand.grid(nrounds = floor((1:len) * 50),
@@ -39,7 +47,11 @@ modelInfo <- list(label = "eXtreme Gradient Boosting",
                                          colsample_bytree = c(0.6, 0.8),
                                          rate_drop = c(0.01, 0.50),
                                          skip_drop = c(0.05, 0.95),
-                                         min_child_weight = c(1))
+                                         min_child_weight = c(1)),
+                                         alpha = c(0),
+                                         lambda = c(1), 
+                                         max_delta_step = c(0),
+                                         scale_pos_weight = c(0))
                     } else {
                       out <- data.frame(nrounds = sample(1:1000, size = len, replace = TRUE),
                                         max_depth = sample(1:10, replace = TRUE, size = len),
@@ -49,7 +61,11 @@ modelInfo <- list(label = "eXtreme Gradient Boosting",
                                         colsample_bytree = runif(len, min = 0.30, max = 0.70),
                                         rate_drop = runif(len, min = 0.01, max = 0.50),
                                         skip_drop = runif(len, min = 0.05, max = 0.95),
-                                        min_child_weight = sample(0:20, size = len, replace = TRUE))
+                                        min_child_weight = sample(0:20, size = len, replace = TRUE),
+                                        alpha = runif(len, 0, 1),
+                                        lambda = runif(len, 0, 10),
+                                        max_delta_step = runif(len, 0, 1),
+                                        scale_pos_weight = runif(len, 0, 1))
                       out$nrounds <- floor(out$nrounds)
                     }
                     out
@@ -57,7 +73,7 @@ modelInfo <- list(label = "eXtreme Gradient Boosting",
                   loop = function(grid) {
                     loop <- plyr::ddply(grid, c( "max_depth", "eta",            "rate_drop",
                                                  "skip_drop", "min_child_weight",
-                                                 "subsample", "colsample_bytree", "gamma"),
+                                                 "subsample", "colsample_bytree", "gamma", "alpha", "lambda", "max_delta_step", "scale_pos_weight"),
                                         function(x) c(nrounds = max(x$nrounds)))
                     submodels <- vector(mode = "list", length = nrow(loop))
                     for(i in seq(along = loop$nrounds)) {
@@ -68,7 +84,11 @@ modelInfo <- list(label = "eXtreme Gradient Boosting",
                                        grid$colsample_bytree == loop$colsample_bytree[i]  &
                                        grid$rate_drop == loop$rate_drop[i] &
                                        grid$skip_drop == loop$skip_drop[i] &
-                                       grid$min_child_weight == loop$min_child_weight[i] )
+                                       grid$min_child_weight == loop$min_child_weight[i] & 
+                                       grid$alpha == loop$alpha[i] & 
+                                       grid$lambda == loop$lambda[i] &                                        
+                                       grid$max_delta_step == loop$max_delta_step[i] & 
+                                       grid$scale_pos_weight == loop$scale_pos_weight[i])
                       trees <- grid[index, "nrounds"]
                       submodels[[i]] <- data.frame(nrounds = trees[trees != loop$nrounds[i]])
                     }
@@ -98,7 +118,11 @@ modelInfo <- list(label = "eXtreme Gradient Boosting",
                                                        min_child_weight = param$min_child_weight,
                                                        gamma = param$gamma,
                                                        subsample = param$subsample,
-                                                       colsample_bytree = param$colsample_bytree),
+                                                       colsample_bytree = param$colsample_bytree,
+                                                       alpha = param$alpha,
+                                                       lambda = param$lambda,
+                                                       max_delta_step = param$max_delta_step,
+                                                       scale_pos_weight = param$scale_pos_weight),
                                                   data = x,
                                                   nrounds = param$nrounds,
                                                   objective = "binary:logistic",
@@ -122,7 +146,11 @@ modelInfo <- list(label = "eXtreme Gradient Boosting",
                                                        min_child_weight = param$min_child_weight,
                                                        gamma = param$gamma,
                                                        subsample = param$subsample,
-                                                       colsample_bytree = param$colsample_bytree),
+                                                       colsample_bytree = param$colsample_bytree,
+                                                       alpha = param$alpha,
+                                                       lambda = param$lambda,
+                                                       max_delta_step = param$max_delta_step,
+                                                       scale_pos_weight = param$scale_pos_weight),
                                                   data = x,
                                                   num_class = length(lev),
                                                   nrounds = param$nrounds,
@@ -146,7 +174,11 @@ modelInfo <- list(label = "eXtreme Gradient Boosting",
                                                      min_child_weight = param$min_child_weight,
                                                      gamma = param$gamma,
                                                      subsample = param$subsample,
-                                                     colsample_bytree = param$colsample_bytree),
+                                                     colsample_bytree = param$colsample_bytree,
+                                                       alpha = param$alpha,
+                                                       lambda = param$lambda,
+                                                       max_delta_step = param$max_delta_step,
+                                                      ),
                                                 data = x,
                                                 nrounds = param$nrounds,
                                                 objective = "reg:squarederror",
@@ -256,5 +288,5 @@ modelInfo <- list(label = "eXtreme Gradient Boosting",
                   tags = c("Tree-Based Model", "Boosting", "Ensemble Model", "Implicit Feature Selection", "Accepts Case Weights"),
                   sort = function(x) {
                     x[order(x$nrounds,          x$max_depth, x$eta,              x$rate_drop, x$skip_drop,
-                            x$min_child_weight, x$subsample, x$colsample_bytree, x$gamma),]
+                            x$min_child_weight, x$subsample, x$colsample_bytree, x$gamma, x$alpha, x$lambda, x$max_delta_step, x$scale_pos_weight),]
                   })
