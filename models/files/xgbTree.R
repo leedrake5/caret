@@ -69,6 +69,10 @@ modelInfo <- list(label = "eXtreme Gradient Boosting",
 
                         if (!is.null(wts))
                           xgboost::setinfo(x, 'weight', wts)
+                          
+                          if(!is.null(watchlist)){
+                              watchlist=list(msr = x)
+                          }
 
                         out <- xgboost::xgb.train(list(eta = param$eta,
                                                        max_depth = param$max_depth,
@@ -81,6 +85,7 @@ modelInfo <- list(label = "eXtreme Gradient Boosting",
                                                        max_delta_step = param$max_delta_step,
                                                        scale_pos_weight = param$scale_pos_weight),
                                                   data = x,
+                                                  watchlist=watchlist,
                                                   nrounds = param$nrounds,
                                                   objective = "binary:logistic",
                                                   ...)
@@ -94,6 +99,10 @@ modelInfo <- list(label = "eXtreme Gradient Boosting",
 
                         if (!is.null(wts))
                           xgboost::setinfo(x, 'weight', wts)
+                          
+                          if(!is.null(watchlist)){
+                              watchlist=list(msr = x)
+                          }
 
                         out <- xgboost::xgb.train(list(eta = param$eta,
                                                        max_depth = param$max_depth,
@@ -109,6 +118,7 @@ modelInfo <- list(label = "eXtreme Gradient Boosting",
                                                        num_class = length(lev),
                                                        nrounds = param$nrounds,
                                                        objective = "multi:softprob",
+                                                       watchlist=watchlist
                                                        ...)
                       }
                     } else {
@@ -119,6 +129,10 @@ modelInfo <- list(label = "eXtreme Gradient Boosting",
 
                       if (!is.null(wts))
                         xgboost::setinfo(x, 'weight', wts)
+                        
+                        if(!is.null(watchlist)){
+                            watchlist=list(msr = x)
+                        }
 
                       out <- xgboost::xgb.train(list(eta = param$eta,
                                                      max_depth = param$max_depth,
@@ -132,6 +146,7 @@ modelInfo <- list(label = "eXtreme Gradient Boosting",
                                                  data = x,
                                                  nrounds = param$nrounds,
                                                  objective = "reg:squarederror",
+                                                 watchlist=watchlist
                                                  ...)
                     }
                     out
